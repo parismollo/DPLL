@@ -29,6 +29,7 @@ Fichiers à rendre:
   - [ ] Week 4
   - [ ] Week 5
 - [ ] Code Analysis
+  - [ ] ocaml environment ([Running OCaml](https://gaufre.informatique.univ-paris-diderot.fr/letouzey/pf5/blob/master/slides/cours-03-outils.md))
 - [ ] Dev plan
 
 ## Timeline
