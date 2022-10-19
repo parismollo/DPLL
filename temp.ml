@@ -21,3 +21,18 @@ let simplifie_tests = let eq l1 l2 = (l1 = l2) in let res_1 = simplifie 1 clause
   List.equal eq [[1]] res_3 && let res_4 = simplifie ~-1 clauses_4 in
   List.equal eq [[2]] res_4 && let res_5 = simplifie 5 clauses_5 in
   List.equal eq [[-2]] res_5
+    
+(*Trying to force the return value to be an int with the multiplication, otherwise raise Error, might need to review this later*)
+let unitaire clauses = let target_clause = List.find (fun clause -> List.length clause = 1) clauses in
+  List.hd target_clause * 1;
+  ;;
+
+let tests_unitaire = let res_1 = unitaire clauses_1 in
+  ~-3 = res_1 && let res_3 = unitaire clauses_3 in 
+  1   = res_3 && let res_4 = unitaire clauses_4 in
+  2   = res_4 && let res_5 = unitaire clauses_5 in
+  ~-2 = res_5
+  ;;
+
+(*unitaire clauses_2*);; (*enlever commentaire pour faire voir exception*) 
+(*unitaire [["clauses_2"]] *) (*enlever commentaire pour faire voir error*) 
