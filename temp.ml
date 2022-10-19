@@ -36,3 +36,16 @@ let tests_unitaire = let res_1 = unitaire clauses_1 in
 
 (*unitaire clauses_2*);; (*enlever commentaire pour faire voir exception*) 
 (*unitaire [["clauses_2"]] *) (*enlever commentaire pour faire voir error*) 
+
+let rec pur_aux elements_of_list list = match elements_of_list with 
+  | [] -> failwith "Pas de literal pur"
+  | x :: xs -> if not (isDual x list) then x else pur_aux xs list
+
+let pur clauses = let flatten_clauses = List.flatten clauses in 
+  let unique_sorted_clauses = List.sort_uniq compare flatten_clauses in
+    pur_aux unique_sorted_clauses flatten_clauses
+
+let tests_pur = let res_1 = pur clauses_1 in
+  ~-3 = res_1 && let res_4 = pur clauses_4 in 
+    ~-1 = res_4 && let res_5 = pur clauses_5 in
+      ~-2 = res_5
