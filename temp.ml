@@ -49,3 +49,22 @@ let tests_pur = let res_1 = pur clauses_1 in
   ~-3 = res_1 && let res_4 = pur clauses_4 in 
     ~-1 = res_4 && let res_5 = pur clauses_5 in
       ~-2 = res_5
+
+(*Tests*)
+let a = [[]; [1; 2]];;
+let b = [[2]; [3]];;
+(*---------------*)
+let rec contains_empty_clause clauses = match clauses with
+  | [] -> false (*Later this will have to change*)
+  | clause :: new_clauses -> if List.length clause = 0 then true 
+    else contains_empty_clause new_clauses
+  ;;
+
+contains_empty_clause a;;
+contains_empty_clause b;;
+
+let c = [[]; [1; 2]];;
+let d = [];;
+let is_empty_clauses clauses = if List.length clauses = 0 then true else false;;
+is_empty_clauses c;;
+is_empty_clauses d;;
