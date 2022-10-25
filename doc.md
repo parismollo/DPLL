@@ -33,10 +33,16 @@ Fichiers à rendre:
 - [x] Code Analysis
 - [x] OCaml environment ([Running OCaml](https://gaufre.informatique.univ-paris-diderot.fr/letouzey/pf5/blob/master/slides/cours-03-outils.md))
 - [x] Dev plan
-- [ ] Simplifie()
-- [ ] Unitatire()
-- [ ] Pur()
-- [ ] DPLL()
+- [x] Simplifie()
+- [x] Unitatire()
+- [x] Pur()
+- [x] DPLL()
+- [ ] Documentation
+  - [ ] Simplifie
+  - [ ] Unitaire
+  - [ ] Pur
+  - [ ] DPLL
+- [ ] Rendu
 
 ## Timeline
 ![Timeline](/res/timeline.png)
@@ -44,17 +50,23 @@ Fichiers à rendre:
 ## Methods to implement
 
 ### simplifie()
-La simplification revient effectivement à substituer ⊤ à l et ⊥ à (-l) dans toutes les clauses de S et à
-simplifier le résultat en utilisant les équivalences logiques φ∨⊤ ⇔ ⊤, φ∨⊥ ⇔ φ et φ∧⊤ ⇔ φ.
-La simplification d’un ensemble F de clauses par un littéral 'l' s’écrit en pseudo-code comme suit.
+La simplification revient effectivement à substituer ⊤ à l et ⊥ à (-l) dans toutes les clauses de S et à simplifier le résultat en utilisant les équivalences logiques φ∨⊤ ⇔ ⊤, φ∨⊥ ⇔ φ et φ∧⊤ ⇔ φ.
+La simplification d’un ensemble F de clauses par un littéral 'l' s’écrit comme suit.
 
-```python
-fonction simplifie(F, l): #F est une formule prop et 'l' le literaux à simplifier.
-  newF = emptyList()
-  pour toutes les C dans F faire: # Loop dans chaque clause de F.
-    si l not in C alors:
-      newF.append(C\{-l}) #on va ajouter le clause sans ajouter le negative de l, s'il existe.
-  return newF
+```ocaml
+(* 
+
+val simplifie : int -> int list list -> int list list 
+Simplifie est composé en 3 parties.Partie 1: verifie si clauses (int list list) est vide, si n'est pas vide, la methode va parcourir les clauses avec un match et appel récursif. Partie 2: pour chaque clause, verifier si le litérall existe dans la clause Partie 3: si le litérall existe, rien faire avec cette clause. (on souhaite pas ajouter cette clause dans le résultat), sinon on va appliquer filter_map avec la fonction filter que verifie si dans la clause son dual est present, et si oui renvoie None car on souhaite pas l'ajouter non plus mais les autres literraux on envoie Some, et donc on ajoute au resultat.*)
+
+1 let rec simplifie l clauses = match clauses with 
+2  | [] -> []
+3  | clause :: new_clauses -> let filter x = (if x = -l then None else Some x) in
+4    if not (List.exists (fun y -> y = l) clause)
+5    then 
+6      [List.rev (filter_map filter clause)] @ simplifie l new_clauses
+7    else
+8       simplifie l new_clauses
 ```
 
 Pour plus d'information voir les examples de simplification avec Java dans le [poly du cours](https://www.irif.fr/~schmitz/teach/2022_lo5/notes.pdf).
