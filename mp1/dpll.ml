@@ -79,22 +79,38 @@ let rec solveur_split clauses interpretation =
       le littéral de cette clause unitaire ;
     - sinon, lève une exception `Not_found' *)
 let unitaire clauses = let target_clause = 
+  (*ETAPE 1. On cherche avec find une clause de taille 1 dans la liste de clauses*)
   List.find (fun clause -> List.length clause = 1) clauses
   in
+  (*ETAPE 2. On envoie le élement *)
   List.hd target_clause * 1
-    
+
+(*val isDual : int -> int list -> bool = <fun>*)
 let isDual x l = List.exists (fun ls -> ls = -x) l
 
-let rec pur_aux elements_of_list list = match elements_of_list with 
-  | [] -> raise Not_found
-  | x :: xs -> if not (isDual x list) then x else pur_aux xs list
+(*Méthode auxiliaire*)
+(*val pur_aux : int list -> int list -> int = <fun>*)
+let rec pur_aux elements_of_list list = 
+  (*ETAPE 1. Pour chaque élément de la liste 'elements of list', qui
+    consiste aux propositions uniques de la clause list*)
+  match elements_of_list with 
+    (*ETAPE 2. On vérifie si son dual existe*)
+    | [] -> raise Not_found
+    (*ETAPE 3. Si son dual n'existe pas, retourne x*)
+    | x :: xs -> if not (isDual x list) then x else pur_aux xs list
 
 (* pur : int list list -> int
     - si `clauses' contient au moins un littéral pur, retourne
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
-let pur clauses = let flatten_clauses = List.flatten clauses in 
-  let unique_sorted_clauses = List.sort_uniq compare flatten_clauses in
+let pur clauses = 
+  (*ETAPE 1. On transforme la liste de liste dans un liste simple.*)
+  let flatten_clauses = List.flatten clauses 
+  in 
+  (*ETAPE 2. On récupère les propositions uniques avec méthode uniq *)
+  let unique_sorted_clauses = List.sort_uniq compare flatten_clauses 
+  in
+  (*ETAPE 3. On applique méthode auxiliaire que cherche pour chaque proposition si son dual existe ou pas*)
   pur_aux unique_sorted_clauses flatten_clauses
 
 let rec contains_empty_clause clauses = match clauses with
@@ -126,7 +142,7 @@ let rec solveur_dpll_rec clauses interp =
   (*Check if clauses = []*)
   if is_empty_clauses clauses = true then Some interp
   
-  (*Check if exists [[]]*)
+  (*Check if exists [] in clauses*)
   else if contains_empty_clause clauses then None
   
   (*If unitaire is not none*)
