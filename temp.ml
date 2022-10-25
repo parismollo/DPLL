@@ -76,25 +76,41 @@ let get_exn = function
 
 
 let unitaire_wrapper clauses = 
-try Some (unitaire clauses) with 
-  Not_found -> None
+  try Some (unitaire clauses) with 
+    Not_found -> None
 
 let pur_wrapper clauses = 
   try Some (pur clauses) with
     Not_found -> None
     
-(*Not working*)
-(*It may not be else, but else if instead - possible bug + reuse of variables?*)
-(*let rec dpll clauses interp = let unit_l = unitaire_wrapper clauses
-  in let pure_l = pur_wrapper clauses
-  in if is_empty_clauses clauses = true then interp
-  else if contains_empty_clause clauses then [None] 
+let rec dpll clauses interp = 
+  (*Get unitiare*)
+  let unit_l = unitaire_wrapper clauses in 
+  
+  (*Get pure*)
+  let pure_l = pur_wrapper clauses in
+  
+  (*Check if clauses = []*)
+  if is_empty_clauses clauses = true then interp
+  
+  (*Check if exists [[]]*)
+  else if contains_empty_clause clauses then [None]
+  
+  (*If unitaire is not none*)
   else if unit_l <> None then let int_l = get_exn unit_l in
   let new_interp = [unit_l] @ interp in
   let new_clauses = simplifie int_l clauses in
   dpll new_clauses new_interp
-  else if pure_l <> None then let int_l = get_exn pure_l in
+  
+  (*If pure is not none*)
+  else if pure_l <> None then let int_l2 = get_exn pure_l in
   let new_interp = [pure_l] @ interp in
-  let new_clauses = simplifie int_l clauses in
-  dpll new_clauses new_interp else interp *)
-
+  let new_clauses = simplifie int_l2 clauses in
+  dpll new_clauses new_interp
+  
+  (* Branchement *)
+  else let l = List.hd (List.hd clauses) in let branch = dpll (simplifie l clauses) (Some l :: interp) 
+  in match branch with 
+    |[None] -> dpll (simplifie (~-l) clauses) (Some ~-l::interp)
+    | _ -> branch
+  ;;

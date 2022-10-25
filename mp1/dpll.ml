@@ -38,9 +38,15 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
 (* simplifie : int -> int list list -> int list list 
    applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai *)
-let simplifie l clauses =
-  (* à compléter *)
-  []
+let rec simplifie l clauses = match clauses with 
+  | [] -> []
+  | clause :: new_clauses -> let filter x = (if x = -l then None else Some x) in
+    if not (List.exists (fun y -> y = l) clause)
+    then 
+      [List.rev (filter_map filter clause)] @ simplifie l new_clauses
+    else
+       simplifie l new_clauses
+  
 
 (* solveur_split : int list list -> int list -> int list option
    exemple d'utilisation de `simplifie' *)
@@ -68,26 +74,83 @@ let rec solveur_split clauses interpretation =
     - si `clauses' contient au moins une clause unitaire, retourne
       le littéral de cette clause unitaire ;
     - sinon, lève une exception `Not_found' *)
-let unitaire clauses =
-  (* à compléter *)
-  0
+
+let unitaire clauses = let target_clause = 
+  List.find (fun clause -> List.length clause = 1) clauses
+  in
+  List.hd target_clause * 1
     
+let isDual x l = List.exists (fun ls -> ls = -x) l
+
+let rec pur_aux elements_of_list list = match elements_of_list with 
+  | [] -> raise Not_found
+  | x :: xs -> if not (isDual x list) then x else pur_aux xs list
+
 (* pur : int list list -> int
     - si `clauses' contient au moins un littéral pur, retourne
       ce littéral ;
     - sinon, lève une exception `Failure "pas de littéral pur"' *)
-let pur clauses =
-  (* à compléter *)
-  0
+let pur clauses = let flatten_clauses = List.flatten clauses in 
+  let unique_sorted_clauses = List.sort_uniq compare flatten_clauses in
+  pur_aux unique_sorted_clauses flatten_clauses
 
-(* solveur_dpll_rec : int list list -> int list -> int list option *)
-let rec solveur_dpll_rec clauses interpretation =
-  (* à compléter *)
-  None
+let rec contains_empty_clause clauses = match clauses with
+  | [] -> false
+  | clause :: new_clauses -> if List.length clause = 0 then true 
+  else contains_empty_clause new_clauses
+
+let is_empty_clauses clauses = if List.length clauses = 0 then true else false
+
+let get_exn = function
+  | Some x -> x
+  | None   -> raise (Invalid_argument "Option.get")
+
+let unitaire_wrapper clauses = 
+  try Some (unitaire clauses) with 
+  Not_found -> None
+
+let pur_wrapper clauses = 
+  try Some (pur clauses) with
+  Not_found -> None
+
+
+(*It may not be else, but else if instead - possible bug + reuse of variables?*)
+let rec solveur_dpll_rec clauses interp = 
+  (*Get unitiare*)
+  let unit_l = unitaire_wrapper clauses in 
+  
+  (*Get pure*)
+  let pure_l = pur_wrapper clauses in
+  
+  (*Check if clauses = []*)
+  if is_empty_clauses clauses = true then Some interp
+  
+  (*Check if exists [[]]*)
+  else if contains_empty_clause clauses then None
+  
+  (*If unitaire is not none*)
+  else if unit_l <> None then let int_l = get_exn unit_l in
+  let new_interp = int_l :: interp in
+  let new_clauses = simplifie int_l clauses in
+  solveur_dpll_rec new_clauses new_interp
+  
+  (*If pure is not none*)
+  else if pure_l <> None then let int_l2 = get_exn pure_l in
+  let new_interp = int_l2 ::interp in
+  let new_clauses = simplifie int_l2 clauses in
+  solveur_dpll_rec new_clauses new_interp
+  
+  (* Branchement *)
+  else let l = List.hd (List.hd clauses) in let branch = solveur_dpll_rec (simplifie l clauses) (l :: interp) 
+  in match branch with 
+    |None -> solveur_dpll_rec (simplifie (-l) clauses) (-l::interp)
+    | _ -> branch
+  ;;
 
 (* tests *)
-(* let () = print_modele (solveur_dpll_rec systeme []) *)
+(* let () = print_modele (solveur_dpll_rec systeme [])  *)
 (* let () = print_modele (solveur_dpll_rec coloriage []) *)
+
 
 let () =
   let clauses = Dimacs.parse Sys.argv.(1) in
