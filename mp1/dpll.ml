@@ -115,12 +115,12 @@ let pur clauses =
   (*ETAPE 3. On applique méthode auxiliaire que cherche pour chaque proposition si son dual existe ou pas*)
   pur_aux unique_sorted_clauses flatten_clauses
 
-let rec contains_empty_clause clauses = match clauses with
+(* let rec contains_empty_clause clauses = match clauses with
   | [] -> false
   | clause :: new_clauses -> if List.length clause = 0 then true 
   else contains_empty_clause new_clauses
 
-let is_empty_clauses clauses = if List.length clauses = 0 then true else false
+let is_empty_clauses clauses = if List.length clauses = 0 then true else false *)
 
 (*fonction auxiliaire: retourne valeur d'un type Some*)
 let get_exn = function
@@ -145,10 +145,10 @@ let rec solveur_dpll_rec clauses interp =
   let pure_l = pur_wrapper clauses in
   
   (*Check if clauses = []*)
-  if is_empty_clauses clauses = true then Some interp
+  if clauses = [] then Some interp
   
   (*Check if exists [] in clauses*)
-  else if contains_empty_clause clauses then None
+  else if mem [] clauses then None
   
   (*If unitaire is not none, appel récursif sur la propositon unitaire*)
   else if unit_l <> None then let int_l = get_exn unit_l in

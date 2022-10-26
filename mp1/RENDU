@@ -62,7 +62,7 @@ on trouve le dual du littéral 'l' et sinon on renvoie l'élément Some x. Avec 
 
 ---
 
-1. Pour l'implémentation de `unitaire`, quelles sont les fonctions
+2. Pour l'implémentation de `unitaire`, quelles sont les fonctions
    auxiliaires que vous avez utilisées et/ou écrites ? (Par une
    fonction auxiliaire, on entend ici soit une fonction d'une
    bibliothèque, par exemple des fonctions comme `List.length`,
@@ -88,7 +88,7 @@ let unitaire clauses = let target_clause =
 
 ---
 
-1. Pour l'implémentation de `pur`, quelles sont les fonctions
+3. Pour l'implémentation de `pur`, quelles sont les fonctions
    auxiliaires que vous avez utilisées et/ou écrites ?  Expliquez en
    quelques phrases en français comment ces fonctions auxiliaires sont
    utilisées dans votre implémentation de la fonction `pur`.
@@ -135,15 +135,9 @@ let isDual x l = List.exists (fun ls -> ls = -x) l
 ```
 ---
 
-1. Donnez un exemple d'une formule pour laquelle les deux fonctions
+4. Donnez un exemple d'une formule pour laquelle les deux fonctions
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
-
-**à remplir**
-
----
-
-5. Avez-vous d'autres remarques sur votre rendu ? (question optionnelle)
 
 **à remplir**
 

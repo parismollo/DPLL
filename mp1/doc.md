@@ -8,7 +8,7 @@
   - [Deliverables](#deliverables)
   - [Backlog](#backlog)
   - [Timeline](#timeline)
-  - [Testing code](#testing-code)
+  - [Running/Testing the code](#runningtesting-the-code)
   - [Resources](#resources)
 
 ## Objective 
@@ -38,11 +38,12 @@ Fichiers à rendre:
   - [x] Pur
   - [x] DPLL
 - [ ] Rendu
+  - [ ] Question 5 du fichier Rendu 
 
 ## Timeline
 ![Timeline](/res/timeline.png)
 
-## Testing code
+## Running/Testing the code
 *todo*
 
 ## Resources
