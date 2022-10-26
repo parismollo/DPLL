@@ -8,18 +8,34 @@ Date limite: 28 octobre 2022, 23h59
 
 Identité
 --------
-Nombre de binôme: **à remplir**
-Nom, prénom 1: **à remplir**
-Nom, prénom 2: **à remplir**
+Nombre de binôme: 11    
+Nom, prénom 1: MOLLO CHRISTONDIS, FELIPE PARIS     
+Nom, prénom 2: POSTOLACHI MARIN     
 
 
 Questions sur votre code
 ------------------------
-0. Avez-vous testé que `make dpll` s'exécute sans erreurs ou warnings,
+1. Avez-vous testé que `make dpll` s'exécute sans erreurs ou warnings,
    et que ensuite `./dpll sudoku-4x4.cnf` donne la réponse attendue (voir
    fichier README) ?
 
-**à remplir**
+Lors du lancement de la commande, nous obtenons la sortie suivante dans le terminal.
+
+```bash
+> make dpll
+ocamlfind ocamlopt -o dpll -package str -linkpkg dimacs.ml dpll.ml
+```
+Ensuite, nous pouvons trouver le fichier éxecutable dpll dans le dossier. 
+
+```bash
+> L3/lo5-2022-2023/DPLL/mp1$ ls
+dimacs.cmi  dimacs.ml  dpll      dpll.cmx  dpll.o    Makefile  RENDU
+dimacs.cmx  dimacs.o   dpll.cmi  dpll.ml   examples  README
+>./dpll examples/sudoku-4x4.cnf.txt 
+SAT
+-111 -112 113 -114 -121 -122 -123 124 -131 132 -133 -134 141 -142 -143 -144 -211 212 -213 -214 221 -222 -223 -224 -231 -232 -233 234 -241 -242 243 -244 311 -312 -313 -314 -321 322 -323 -324 -331 -332 333 -334 -341 -342 -343 344 -411 -412 -413 414 -421 -422 423 -424 431 -432 -433 -434 -441 442 -443 -444 0
+```
+Donc, nous pouvons conclure que le résultat est celui attendue. Nous n'avons ni d'erreurs ni de warnings lors de la compilation ou lors de l'éxecution.
 
 ---
 
@@ -30,11 +46,23 @@ Questions sur votre code
    - Si non, expliquez en quelques phrases en français comment
      fonctionne votre implémentation de `simplifie`.
 
-**à remplir**
+Oui, nous utilisons la fonction `filter_map` dans l'implémentation du méthode `simplifie`.
+La méthode `filter_map` applique un filtre pour chaque élement de la liste. Nous avons 
+créé un méthode `filter` dans `simplifie`, ce méthode est responsable pour reenvoyer None si
+on trouve le dual du littéral 'l' et sinon on renvoie l'élément Some x. Avec ces deux méthodes, `filter` et `filter_map`, pour chaque clause, nous pouvons append au résultat de la méthode uniquement les éléments qui sont différents du dual du littéral 'l'.
+
+```ocaml
+. . .
+(* définition du méthode filter *)
+| clause :: new_clauses -> let filter x = (if x = -l then None else Some x)
+. . . 
+(*ici pour chaque clause, on renvoie seulements les élements qui sont different du dual de 'l' et ensuite on append au appel récursif suivant *)
+[List.rev (filter_map filter clause)] @ simplifie l new_clauses 
+```
 
 ---
 
-2. Pour l'implémentation de `unitaire`, quelles sont les fonctions
+1. Pour l'implémentation de `unitaire`, quelles sont les fonctions
    auxiliaires que vous avez utilisées et/ou écrites ? (Par une
    fonction auxiliaire, on entend ici soit une fonction d'une
    bibliothèque, par exemple des fonctions comme `List.length`,
@@ -43,20 +71,71 @@ Questions sur votre code
    comment ces fonctions auxiliaires sont utilisées dans votre
    implémentation de la fonction `unitaire`.
 
-**à remplir**
+Pour l'implémentation d'`unitiare`, nous avons utilisé de 3 fonctions 
+auxiliaires de la bibliothèque OCaml. `List.find`, qui réçoit une fonction en 
+paramètre, cette fonction, dans ce cas, cherche une clause de taille 1, pour cela
+nous utilions `List.length` que renvoie la taille d'une liste. Ensuite, on renvoie le premier
+élément de la liste avec `List.hd`.
+
+```ocaml
+let unitaire clauses = let target_clause = 
+  (*ETAPE 1. On cherche avec find une clause de taille 1 dans la liste de clauses*)
+  List.find (fun clause -> List.length clause = 1) clauses
+  in
+  (*ETAPE 2. On envoie l'élement *)
+  List.hd target_clause * 1
+```
 
 ---
 
-3. Pour l'implémentation de `pur`, quelles sont les fonctions
+1. Pour l'implémentation de `pur`, quelles sont les fonctions
    auxiliaires que vous avez utilisées et/ou écrites ?  Expliquez en
    quelques phrases en français comment ces fonctions auxiliaires sont
    utilisées dans votre implémentation de la fonction `pur`.
 
-**à remplir**
+La méthode `pur` utilise de 5 fonctions auxiliaires. 
+1. `List.flatten`
+2. `List.sort_uniq`
+3. `pur_aux`
+4. `isDual`
+5. `List.exists`
 
+```ocaml
+let pur clauses = 
+  (* Dans un premier temps, on transforme une liste de liste dans une liste simple
+   avec List.flatten, afin de faciliter la manipulation *)
+  let flatten_clauses = List.flatten clauses 
+  in 
+  (* Ensuite, on souhaite trouver les propositions uniques de la formule avec List.sort_uniq *)
+  let unique_sorted_clauses = List.sort_uniq compare flatten_clauses 
+  in
+  (* Finalment, on passe les propostions uniques et la formule au format liste simple 
+   à fonction auxiliaire pur_aux *)
+  pur_aux unique_sorted_clauses flatten_clauses
+``` 
+
+Maintenant, voyons la fonction auxiliare `pur_aux`
+
+```ocaml
+let rec pur_aux elements_of_list list = 
+  (*Pour chaque élément de la liste 'elements of list', qui
+    consiste aux propositions uniques de la clause list*)
+  match elements_of_list with 
+    (*On vérifie si son dual existe*)
+    | [] -> raise Not_found
+    (*Si son dual n'existe pas, retourne x*)
+    | x :: xs -> if not (isDual x list) then x else pur_aux xs list
+```
+Finalement, la méthode auxilaire, `isDual`.
+
+```ocaml
+(* Cette fonction utilise de List.exists afin de vérifier si son dual existe dans la liste 'l' 
+   passé en paramètre*)
+let isDual x l = List.exists (fun ls -> ls = -x) l
+```
 ---
 
-4. Donnez un exemple d'une formule pour laquelle les deux fonctions
+1. Donnez un exemple d'une formule pour laquelle les deux fonctions
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
 
