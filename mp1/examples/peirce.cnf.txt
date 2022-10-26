@@ -1,0 +1,11 @@
+c table des propositions
+c   P Q 
+c   7 8 
+p cnf 8 7
+1 0
+-2 -3 0
+-4 -5 0
+-3 4 7 0
+-1 2 7 0
+-5 6 8 0
+-6 -7 0
