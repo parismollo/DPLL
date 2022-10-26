@@ -1,7 +1,7 @@
 # DPLL Algorithm
 >**Deadline**: 27/10/2022   
->**Last Update**: 14/10/2022   
->**Project Phase**: P1 - LO5 Lectures review.
+>**Last Update**: 26/10/2022   
+>**Project Phase**: P6. Documentation
 
 - [DPLL Algorithm](#dpll-algorithm)
   - [Objective](#objective)
@@ -24,18 +24,27 @@ Fichiers à rendre:
 4. `Makefile`
 
 ## Backlog
-- [ ] Lectures review
-  - [ ] Week 3
-  - [ ] Week 4
-  - [ ] Week 5
-- [ ] Code Analysis
-  - [ ] ocaml environment ([Running OCaml](https://gaufre.informatique.univ-paris-diderot.fr/letouzey/pf5/blob/master/slides/cours-03-outils.md))
-- [ ] Dev plan
+- [x] Lectures review (focus on week 10/10)
+- [x] Code Analysis
+- [x] OCaml environment ([Running OCaml](https://gaufre.informatique.univ-paris-diderot.fr/letouzey/pf5/blob/master/slides/cours-03-outils.md))
+- [x] Dev plan
+- [x] Simplifie()
+- [x] Unitatire()
+- [x] Pur()
+- [x] DPLL()
+- [x] Documentation
+  - [x] Simplifie
+  - [x] Unitaire
+  - [x] Pur
+  - [x] DPLL
+- [ ] Rendu
 
 ## Timeline
 ![Timeline](/res/timeline.png)
 
 ## Testing code
 *todo*
+
 ## Resources
-*todo*
+* [OCaml Overview](https://ocaml.org/docs/first-hour)
+* [OCaml exercices](https://ocaml.org/problems)
