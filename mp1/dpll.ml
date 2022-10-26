@@ -37,21 +37,22 @@ let coloriage = [[1;2;3];[4;5;6];[7;8;9];[10;11;12];[13;14;15];[16;17;18];[19;20
    Applique la simplification de l'ensemble des clauses en mettant
    le littéral l à vrai
 *)
-let rec simplifie l clauses = match clauses with 
+let rec simplifie l clauses = match clauses with
   (*ETAPE 1. parcours du tableau clauses, avec pattern matching*)
   (*NOTE: si tableau est vide, renvoie un tableau vide*)
   | [] -> []
   (*ETAPE 2. sinon, pour chaque clause*)
-  (*NOTE: methode filter vérifie si existe le dual du litteral 'l'*)
+  (*NOTE: methode filter vérifie si existe le dual du littéral 'l'*)
   | clause :: new_clauses -> let filter x = (if x = -l then None else Some x) in
   (*ETAPE 3. si clause ne contient pas le littéral 'l'*)
     if not (List.exists (fun y -> y = l) clause) 
     then 
-      (*ETAPE 4. append la clause, sans le dual de l, s'il existe. ensuite appel recursif*)
-      (*NOTE: ici, on utiliser filter et filter_map pour ajouter au
+      (*A. Append la clause, sans le dual de l, s'il existe. Ensuite appel récursif.*)
+      (*NOTE: ici, on utiliser filter et filter_map pour ajouter au 
         tableau seulement les valeurs que nous intéresse.*)
       [List.rev (filter_map filter clause)] @ simplifie l new_clauses 
-      (*ETAPE 5. sinon, on ignore clause qui contient l (car on met à true 'l') et on fait appel recursif sur le reste du tableau*)
+      (*B. Sinon, on ignore clause qui contient l (car on met à true 'l') et 
+        on fait appel recursif sur le reste du tableau*)
     else 
        simplifie l new_clauses
   
@@ -82,9 +83,10 @@ let unitaire clauses = let target_clause =
   (*ETAPE 1. On cherche avec find une clause de taille 1 dans la liste de clauses*)
   List.find (fun clause -> List.length clause = 1) clauses
   in
-  (*ETAPE 2. On envoie le élement *)
+  (*ETAPE 2. On envoie l'élement *)
   List.hd target_clause * 1
 
+(*Méthode auxiliaire*)
 (*val isDual : int -> int list -> bool = <fun>*)
 let isDual x l = List.exists (fun ls -> ls = -x) l
 
@@ -120,14 +122,17 @@ let rec contains_empty_clause clauses = match clauses with
 
 let is_empty_clauses clauses = if List.length clauses = 0 then true else false
 
+(*fonction auxiliaire: retourne valeur d'un type Some*)
 let get_exn = function
   | Some x -> x
   | None   -> raise (Invalid_argument "Option.get")
 
+(*fonction auxiliaire: retourne (Some résultat) ou None si exception.*)
 let unitaire_wrapper clauses = 
   try Some (unitaire clauses) with 
   Not_found -> None
 
+(*fonction auxiliaire: retourne (Some résultat) ou None si exception.*)
 let pur_wrapper clauses = 
   try Some (pur clauses) with
   Not_found -> None
@@ -145,21 +150,22 @@ let rec solveur_dpll_rec clauses interp =
   (*Check if exists [] in clauses*)
   else if contains_empty_clause clauses then None
   
-  (*If unitaire is not none*)
+  (*If unitaire is not none, appel récursif sur la propositon unitaire*)
   else if unit_l <> None then let int_l = get_exn unit_l in
   let new_interp = int_l :: interp in
   let new_clauses = simplifie int_l clauses in
   solveur_dpll_rec new_clauses new_interp
   
-  (*If pure is not none*)
+  (*If pure is not none, appel récursif sur la proposition pure*)
   else if pure_l <> None then let int_l2 = get_exn pure_l in
-  let new_interp = int_l2 ::interp in
+  let new_interp = int_l2 :: interp in
   let new_clauses = simplifie int_l2 clauses in
   solveur_dpll_rec new_clauses new_interp
   
-  (* Branchement *)
+  (* Branchement, dans un premier temps appel récursif sur propostion p *)
   else let l = List.hd (List.hd clauses) in let branch = solveur_dpll_rec (simplifie l clauses) (l :: interp) 
   in match branch with 
+    (*Si son retour est None, appel récursif sur son dual*)
     |None -> solveur_dpll_rec (simplifie (-l) clauses) (-l::interp)
     | _ -> branch
   ;;
