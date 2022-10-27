@@ -1,7 +1,7 @@
 # DPLL Algorithm
 >**Deadline**: 27/10/2022   
->**Last Update**: 26/10/2022   
->**Project Phase**: P6. Documentation
+>**Last Update**: 27/10/2022   
+>**Project Phase**: P7. Conclusion
 
 - [DPLL Algorithm](#dpll-algorithm)
   - [Objective](#objective)
@@ -37,14 +37,28 @@ Fichiers à rendre:
   - [x] Unitaire
   - [x] Pur
   - [x] DPLL
-- [ ] Rendu
-  - [ ] Question 5 du fichier Rendu 
+- [x] Rendu
 
 ## Timeline
-![Timeline](/res/timeline.png)
+![Timeline](res/timeline.png)
 
 ## Running/Testing the code
-*todo*
+To compile the code
+
+```bash
+> make dpll
+ocamlfind ocamlopt -o dpll -package str -linkpkg dimacs.ml dpll.ml
+```
+
+```bash
+# Test the code
+> ./dpll examples/sudoku-9x9-easy.cnf.txt
+```
+
+```bash
+# Remove compiled files
+> make clean
+```
 
 ## Resources
 * [OCaml Overview](https://ocaml.org/docs/first-hour)
