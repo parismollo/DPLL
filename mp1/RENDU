@@ -139,7 +139,19 @@ let isDual x l = List.exists (fun ls -> ls = -x) l
    `solveur_split` et `solveur_dpll_rec` ont un comportement
    différent, et expliquez les différences entre ces deux fonctions.
 
-La fonction `solveur_split` ne contient pas la ni méthode unitaire ni la méthode pure, cela donnera une importante avantage à la fonction `solveur_dpll_rec`, par rapport le temps pour résoudre la formule, mais aussi, pourrait donner une solution différente. Voici un example. Pour l'example `sudoku-9x9-hard.cnf.txt`, le temps d'éxecution avec la méthode solveur_dpll_rec est d'environ 2 seconds. Pendant que la méthode solveur_split n'arrive pas à calculer sans dépasser quelques minutes, de sorte qu'on a pas pu attendre le fin de l'éxecution.
+La fonction `solveur_split` ne contient pas la ni méthode unitaire ni la méthode pure, cela donnera une importante avantage à la fonction `solveur_dpll_rec`, par rapport le temps pour résoudre la formule, mais aussi, pourrait donner une solution différente. Voici un example. Pour l'example `sudoku-9x9-hard.cnf.txt`, le temps d'éxecution avec la méthode solveur_dpll_rec est d'environ 2 seconds. Pendant que la méthode solveur_split n'arrive pas à calculer sans dépasser quelques minutes, de sorte qu'on a pas pu attendre le fin de l'éxecution. Ensuite, pour une formule comme la suivante: 
+- `let example_new = [[1; 2; 5]; [6; 7; 5]; [8; 9; 5]];;`
+Lorsqu'on lance les fonctions `solveur_split` et `solveur_dpll_rec` on trouve les résultats suivants: 
+```bash
+# solveur_split
+SAT
+1 6 8 0
+# solveur_dpll_rec
+SAT
+1 5 0
+```
+Ici, c'est grâce à la fonction pur, présente dans `solveur_dpll_rec` qu'on peut résoudre cette formule plus rapidement et
+aussi avec une interprétation plus simple.
 
 
 ---
